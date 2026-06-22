@@ -93,6 +93,19 @@ class FournisseurDAO(BaseDAO):
         if not db.connect():
             return False
 
+        sql_check = """
+        SELECT COUNT(*) FROM commande
+        WHERE fournisseur_id=%s
+        """
+
+        db.execute(sql_check, (id,))
+        nb_commandes = db.fetchone()[0]
+
+        if nb_commandes > 0:
+            db.disconnect()
+            print("Impossible de supprimer ce fournisseur : des commandes sont associées.")
+            return False
+
         sql = """DELETE FROM fournisseur WHERE id=%s"""
 
         ok = db.execute(sql, (id,))
@@ -101,5 +114,94 @@ class FournisseurDAO(BaseDAO):
             db.commit()
 
         db.disconnect()
-
         return ok
+
+    def update(self, fournisseur):
+        db = DatabaseConnection()
+
+        if not db.connect():
+            return False
+
+        sql = """
+        UPDATE fournisseur
+        SET code=%s,
+            raison_sociale=%s,
+            email=%s,
+            telephone=%s,
+            adresse=%s
+        WHERE id=%s
+        """
+
+        ok = db.execute(sql, (
+            fournisseur.code,
+            fournisseur.raison_sociale,
+            fournisseur.email,
+            fournisseur.telephone,
+            fournisseur.adresse,
+            fournisseur.id
+        ))
+
+        if ok:
+            db.commit()
+
+        db.disconnect()
+        return ok
+
+    def rechercher_par_code(self, code):
+        db = DatabaseConnection()
+
+        if not db.connect():
+            return None
+
+        sql = """SELECT * FROM fournisseur WHERE code=%s"""
+
+        db.execute(sql, (code,))
+        ligne = db.fetchone()
+
+        db.disconnect()
+
+        if ligne:
+            return Fournisseur(
+                id=ligne[0],
+                code=ligne[1],
+                raison_sociale=ligne[2],
+                email=ligne[3],
+                telephone=ligne[4],
+                adresse=ligne[5],
+                date_creation=ligne[6]
+            )
+
+        return None
+
+    def rechercher_par_raison_sociale(self, raison_sociale):
+        db = DatabaseConnection()
+
+        if not db.connect():
+            return []
+
+        sql = """
+        SELECT * FROM fournisseur
+        WHERE raison_sociale LIKE %s
+        """
+
+        db.execute(sql, (f"%{raison_sociale}%",))
+        resultats = db.fetchall()
+
+        db.disconnect()
+
+        fournisseurs = []
+
+        for ligne in resultats:
+            fournisseur = Fournisseur(
+                id=ligne[0],
+                code=ligne[1],
+                raison_sociale=ligne[2],
+                email=ligne[3],
+                telephone=ligne[4],
+                adresse=ligne[5],
+                date_creation=ligne[6]
+            )
+
+            fournisseurs.append(fournisseur)
+
+        return fournisseurs
