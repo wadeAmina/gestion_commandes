@@ -1,7 +1,5 @@
-import psycopg2
 import mysql.connector
 from database.config import TYPE_BD, MYSQL
-
 class DatabaseConnection:
     _instance = None
 
