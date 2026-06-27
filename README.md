@@ -1,21 +1,29 @@
 # Gestion des Commandes
 
-Projet de Programmation Python - Licence 2 IAGE
+## Description
+Application console en Python permettant la gestion des fournisseurs, produits et commandes.
 
-## Membres du groupe
-- Aminata Wade
-- Khoudia Dieng
-
-## Technologies utilisées
+## Technologies
 - Python
 - MySQL
-- GitHub
+- mysql-connector-python
 
-## Fonctionnalités
-- Gestion des fournisseurs
-- Gestion des produits
-- Gestion des commandes
+## Structure
 
-## Lancement
+database/
+dao/
+models/
+menu/
+
+## Installation
+
+pip install -r requirements.txt
+
+## Exécution
 
 python main.py
+
+## Auteurs
+
+- Aminata Wade
+- Khoudia Dieng
